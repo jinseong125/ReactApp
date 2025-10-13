@@ -46,5 +46,138 @@
       - 초기 상태 값을 반환하는 함수입니다. 생략하면 2번째 인자인 initialArg에서 결정한 값을 초기 상태 값으로 가집니다.
 -->
 
+<div id="root1"></div>
+<script type="text/babel">
+
+  // 함수형 컴포넌트 (함수 선언식 사용해 보기)
+  function Spin() {
+
+    // 초기 initialArg 객체 (초기 state를 의미합니다.)
+    const initialArg = {
+      number: 0
+    }
+
+    // useReducer
+    const [ state, dispatch ] = React.useReducer(changeNumber, initialArg);
+
+    // event handler : 이벤트 객체 사용 가능
+    function increaseHandler(e) {
+      dispatch({
+        type: 'INCREASE'  // dispatch 함수가 전달하는 {type: 'INCREASE'} 객체는 changeNumber 함수(reducer 함수)의 action에 전달됩니다.
+                          // dispatch 함수를 호출하면 reducer 함수에 action을 전달하면서 reducer 함수가 실행됩니다.
+      });
+    }
+
+    function decreaseHandler(e) {
+      dispatch({
+        type: 'DECREASE'
+      });
+    }
+
+    return (
+      <>
+        <h1>{state.number}</h1>
+        <button onClick={increaseHandler}>+</button>
+        <button onClick={decreaseHandler}>-</button>
+      </>
+    )
+
+  }
+
+  // reducer 함수
+  function changeNumber(state, action) {  // reducer 함수의 인자 값(state, action)은 변경하지 않습니다.
+                                          // state.number = 10 (이런 코드 XXX)
+
+  // reducer 함수는 action에 따라 새로운 state를 만들어 반환합니다.            
+  // 전달된 state를 직접 바꿀 수는 없으므로, 새로운 state를 만들어서 반환해야 합니다.                              
+    switch (action.type) {
+      case 'INCREASE':
+        return { number: state.number + 1 };
+      case 'DECREASE':
+        return { number: state.number - 1 };
+      default:
+        return state;
+    }
+  }
+
+  // 렌더링
+  ReactDOM.createRoot(document.getElementById('root1')).render(<Spin/>);
+
+</script>
+
+<hr>
+
+<div id="root2"></div>
+<script type="text/babel">
+
+  // 함수형 컴포넌트 (함수 표현식 사용해 보기)
+  const Form = () => {
+
+    // 초기 state 객체
+    const initialContact = {
+      email: '',
+      mobile: '',
+    }
+
+    // useReducer
+    const [ contact, saveContact ] = React.useReducer(formReducer, initialContact);
+
+    // event handler
+    const onChangeHandler = (e) => {
+      saveContact(e.target);
+    }
+
+    return (
+      <>
+      <InputField
+          type="text"
+          name="email"
+          placeholder="id@example.com"
+          value={contact.email}
+          onChangeHandler={onChangeHandler} />
+        <input type="text" name="email" placeholder="id@example.com" onChange={onChangeHandler} />
+        <br/>
+      <InputField
+          type="text"
+          name="mobile"
+          placeholder="010-0000-0000"
+          value={contact.mobile}
+          onChangeHandler={onChangeHandler} />
+        <input type="text" name="mobile" placeholder="010-0000-0000" onChange={onChangeHandler} />
+        <br/>
+        <h1>{contact.email}</h1>
+        <h1>{contact.mobile}</h1>
+      </>
+    )
+  }
+
+  // InputField 컴포넌트
+  const InputField = ({ type, name, placeholder, value, onChangeHandler }) => {  // 객체 구조 분해 할당
+    // const type = props.type;
+    return (
+      <input 
+       type={type}
+       name={name} 
+       placeholder={placeholder} 
+       value={value} 
+       onChange={onChangeHandler} />
+    )
+  }
+
+  // reducer 함수 (formReducer)
+  const formReducer = (contact, action) => {
+    // action에 따른 새로운 state (contact 객체) 반환
+    return {
+
+      ...contact,  // 기존 contactg 객체의 값을 그대로 사용합니다.
+      [action.name]: action.value,  // action으로 전달되 e.target 객체의 값을 이용
+    }
+  }
+
+  // 렌더링
+  ReactDOM.createRoot(document.getElementById('root2')).render(<Form/>);
+
+</script>
+
 </body>
 </html>
