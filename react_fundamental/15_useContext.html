@@ -133,11 +133,99 @@
       </div>
     )
   }
-
     ReactDOM.createRoot(document.getElementById('root2')).render(<App2/>)
 
+</script>
+
+<hr>
+
+<div id="root3"></div>
+<script type="text/babel">
+
+  // reducer 함수
+  const formReducer = (contact, action) => {
+    return {
+      ...contact,
+      [action.name]: action.value,  // input name을 키로, value를 값으로
+    };
+  };
+
+  // Context 생성
+  const FormContext = React.createContext();
+
+  // InputField 컴포넌트
+  const InputField = ({ type, name, placeholder }) => {
+    const { contact, saveContact } = React.useContext(FormContext);
+
+    const onChangeHandler = (e) => {
+      saveContact(e.target);
+    };
+
+    return (
+      <input
+        type={type}
+        name={name}
+        placeholder={placeholder}
+        value={contact[name]}
+        onChange={onChangeHandler}
+      />
+    );
+  };
+
+  // Form 컴포넌트
+  const Form = () => {
+    const { contact } = React.useContext(FormContext);
+
+    return (
+      <>
+        <InputField
+          type="text"
+          name="email"
+          placeholder="id@example.com"
+        />
+        <br />
+        <InputField
+          type="text"
+          name="mobile"
+          placeholder="010-0000-0000"
+        />
+        <br />
+        <h3>입력 결과</h3>
+        <p>이메일: {contact.email}</p>
+        <p>전화번호: {contact.mobile}</p>
+      </>
+    );
+  };
+
+  // FormProvider 컴포넌트 (Provider 래핑 전용)
+  function FormProvider({ children }) {
+    const initialContact = {
+      email: '',
+      mobile: '',
+    };
+
+    const [contact, saveContact] = React.useReducer(formReducer, initialContact);
+
+    return (
+      <FormContext.Provider value={{ contact, saveContact }}>
+        {children}
+      </FormContext.Provider>
+    );
+  }
+
+  // App (최상위)
+  function App() {
+    return (
+      <FormProvider>
+        <Form />
+      </FormProvider>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root3')).render(<App />);
 
 </script>
+
 
 </body>
 </html>
