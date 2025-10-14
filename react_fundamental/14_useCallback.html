@@ -14,7 +14,7 @@
 1. React.useCallback()
   1) 리렌더링 시 함수 정의는 항상 재할당됩니다.
   2) 함수형 컴포넌트에서 함수 자체를 메모이제이션(memoization)하여 불필요한 함수 재생성을 방지하고, 성능을 최적화하는 훅(Hooks) 입니다.
-  3) 컴포넌트 내부에서 정의한 함수는 렌더링마다 새로 생성되기 때문에 useCallback의 주요 대상이지만, 컴포넌트 외부에서 정의한 함수는 원래 한 번만 생성되므로 useCallback이 필요 없습니다.
+  3) * 컴포넌트 내부에서 정의한 함수는 렌더링마다 새로 생성되기 때문에 useCallback의 주요 대상이지만, 컴포넌트 외부에서 정의한 함수는 원래 한 번만 생성되므로 useCallback이 필요 없습니다.
   4) 주요 특징
     (1) 함수 메모이제이션
       ▶︎ 의존성 배열에 명시된 값이 변경될 때만 새로운 함수를 생성하고, 그렇지 않으면 이전에 생성한 동일한 함수 인스턴스를 재사용합니다.
@@ -38,6 +38,58 @@
       - 의존성 배열을 빈 배열([])로 전달하면 컴포넌트가 처음 마운트될 때 한 번만 callback 함수가 생성되고 이후에는 재생성되지 않습니다.
       - 의존성 배열에 특정 값을 넣으면 그 값이 변경될 때만 callback 함수가 생성됩니다.
 -->
+
+<div id="root1"></div>
+<script type="text/babel">
+
+  function UseCallbackComp() {
+
+    // React 객체로부터 필요한 것만 빼서 사용하기 예제 (객체 구조 분해 할당)
+    const { useState, useEffect, useCallback } = React;
+
+    // state
+    const [ number, setNumber ] = useState(0);  // printNumber 함수에 영향을 미치는 state
+    const [ text, setText ] = useState('');     // printNumber 함수와 상관이 없는 state
+
+    // 함수
+    // - 컴포넌트 내부에서 선언한 함수는 컴포넌트가 리렌더링될때마다 항상 재할당됩니다.
+    //   (함수 자체는 그대로이지만, 함수의 참조값이 바뀌기 때문입니다.)
+
+    // 리렌더링 시 매번 재할당되는 함수
+    /*
+    const printNumber = () => console.log(number);
+    */
+
+    // 함수를 캐싱해 두는 useCallback을 이용한 함수
+    const printNumber = useCallback(() => {
+      console.log(number);
+    }, [number]);  // number가 변하는 경우 캐싱해 둔 함수를 사용하지 않고, useCallback()이 가진 함수를 반환합니다.
+
+    // useEffect
+    useEffect(() => {
+      printNumber();
+    }, [printNumber]);
+
+    // return
+    return (
+      <>
+        <input
+          type="number"
+          value={number}
+          onChange={e => setNumber(Number(e.target.value))} />
+          <br />
+          <input
+            type="text"
+            value={text}
+            onChange={e => setText(e.target.value)} />
+      </>
+    )
+
+  }
+
+  ReactDOM.createRoot(document.getElementById('root1')).render(<UseCallbackComp />);
+
+</script>
 
 </body>
 </html>
