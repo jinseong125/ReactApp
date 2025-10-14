@@ -27,5 +27,65 @@
       - 반환 객체 ref의 current 프로퍼티에 저장하는 초기값입니다.
 -->
 
+<div id="root1"></div>
+<script type="text/babel">
+
+  // 리렌더링과 무관하게 값을 저장하는 경우
+
+  function UseRef1() {
+
+    const { useRef } = React;
+
+    // useRef
+    const objNumber = useRef(0);  // objNumber = { current: 0 }
+
+    // return
+    return (
+      <>
+        <button onClick={e => {
+          objNumber.current += 1;
+          console.log(objNumber.current);
+        }}>objNumber증가</button>
+        <div>objNumber: {objNumber.current}</div>
+      </>
+    )
+
+  }
+
+  ReactDOM.createRoot(document.getElementById('root1')).render(<UseRef1 />);
+
+</script>
+
+<hr>
+
+<div id="root2"></div>
+<script type="text/babel">
+
+  function UseRef2() {
+
+    const { useEffect, useRef } = React;
+
+    // useRef
+    const inputRef = useRef();  // 초기값이 없는 이유: <input> JSX 노드를 만들 때 ref 속성으로 지정하기 위해서 .
+
+    // useEffect
+    useEffect(() => {
+      console.log(inputRef.current);
+      inputRef.current.focus();
+    }, []);
+
+    // return
+    return (
+      <input
+        type="text"
+        ref={inputRef} />
+    )
+
+  }
+
+    ReactDOM.createRoot(document.getElementById('root2')).render(<UseRef2 />);
+
+</script>
+
 </body>
 </html>
