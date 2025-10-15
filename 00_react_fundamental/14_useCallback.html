@@ -37,6 +37,12 @@
       - 의존성 배열을 전달하지 않으면, useCallback은 모든 렌더링마다 callback 함수를 재할당하므로 메모이제이션의 효과를 얻을 수 없습니다. (useCallback을 사용하지 않은 것과 같습니다.)
       - 의존성 배열을 빈 배열([])로 전달하면 컴포넌트가 처음 마운트될 때 한 번만 callback 함수가 생성되고 이후에는 재생성되지 않습니다.
       - 의존성 배열에 특정 값을 넣으면 그 값이 변경될 때만 callback 함수가 생성됩니다.
+
+    (4) printNumber
+      - 현재 number 값을 콘솔에 찍는 함수이며, useCallback으로 캐싱된 함수.
+      - 즉, number가 바뀔 때만 새로 만들어지고, 나머지 렌더링에서는 이전 함수 그대로 재사용됨.
+
+    onChange : React에서 입력값이 바뀔 때 실행되는 이벤트 핸들러.
 -->
 
 <div id="root1"></div>
@@ -44,44 +50,24 @@
 
   function UseCallbackComp() {
 
-    // React 객체로부터 필요한 것만 빼서 사용하기 예제 (객체 구조 분해 할당)
     const { useState, useEffect, useCallback } = React;
 
-    // state
-    const [ number, setNumber ] = useState(0);  // printNumber 함수에 영향을 미치는 state
-    const [ text, setText ] = useState('');     // printNumber 함수와 상관이 없는 state
+    const [ text, setText ] = useState('');
+    const [ number , setNumber] = useState(0);
 
-    // 함수
-    // - 컴포넌트 내부에서 선언한 함수는 컴포넌트가 리렌더링될때마다 항상 재할당됩니다.
-    //   (함수 자체는 그대로이지만, 함수의 참조값이 바뀌기 때문입니다.)
-
-    // 리렌더링 시 매번 재할당되는 함수
-    /*
-    const printNumber = () => console.log(number);
-    */
-
-    // 함수를 캐싱해 두는 useCallback을 이용한 함수
     const printNumber = useCallback(() => {
       console.log(number);
-    }, [number]);  // number가 변하는 경우 캐싱해 둔 함수를 사용하지 않고, useCallback()이 가진 함수를 반환합니다.
+    }, [number]);
 
-    // useEffect
     useEffect(() => {
       printNumber();
     }, [printNumber]);
 
-    // return
     return (
       <>
-        <input
-          type="number"
-          value={number}
-          onChange={e => setNumber(Number(e.target.value))} />
-          <br />
-          <input
-            type="text"
-            value={text}
-            onChange={e => setText(e.target.value)} />
+        <input type="text" value={text} onChange={e => setText(e.target.value)} />
+        <br />
+        <input type="number" value={number} onChange={e => setNumber(Number(e.target.value))} />
       </>
     )
 
