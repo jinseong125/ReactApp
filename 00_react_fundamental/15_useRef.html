@@ -45,8 +45,9 @@
         <button onClick={e => {
           objNumber.current += 1;
           console.log(objNumber.current);
-        }}>objNumber증가</button>
-        <div>objNumber: {objNumber.current}</div>
+          }}>objNumber증가</button>
+        <div>objNumber: {objNumber.current}</div> {/* 여기서 렌더링 시점에만 objNumber.current를 읽고 있기 때문에,
+                                                      값이 바뀌어도 React가 다시 렌더링을 안 함. */}
       </>
     )
 

@@ -48,19 +48,19 @@
 <div id="root1"></div>
 <script type="text/babel">
 
-  function UseCallbackComp() {
+  function useCallbackComp() {
 
-    const { useState, useEffect, useCallback } = React;
+    const {useState, useEffect, useCallback} = React;
 
     const [ text, setText ] = useState('');
-    const [ number , setNumber] = useState(0);
+    const [ number, setNumber ] = useState(0);
 
     const printNumber = useCallback(() => {
       console.log(number);
     }, [number]);
 
     useEffect(() => {
-      printNumber();
+      printNumber
     }, [printNumber]);
 
     return (
@@ -73,7 +73,7 @@
 
   }
 
-  ReactDOM.createRoot(document.getElementById('root1')).render(<UseCallbackComp />);
+  ReactDOM.createRoot(document.getElementById('root1')).render(<useCallbackComp/>);
 
 </script>
 
